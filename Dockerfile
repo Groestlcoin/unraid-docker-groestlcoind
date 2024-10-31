@@ -17,19 +17,19 @@ RUN apk --no-cache add \
 
 ARG VERSION
 
-RUN git clone --depth 1 https://github.com/bitcoin/bitcoin.git --branch v$VERSION --single-branch
+RUN git clone --depth 1 https://github.com/groestlcoin/groestlcoin.git --branch v$VERSION --single-branch
 
-WORKDIR /bitcoin
+WORKDIR /groestlcoin
 
-RUN cd /bitcoin/depends; make NO_QT=1 -j"$(($(nproc)+1))"
+RUN cd /groestlcoin/depends; make NO_QT=1 -j"$(($(nproc)+1))"
 
 RUN wget https://zlib.net/zlib-1.3.1.tar.gz && \
     echo "9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23  zlib-1.3.1.tar.gz" | sha256sum -c && \
     mkdir -p /usr/src/zlib; tar zxvf zlib-1.3.1.tar.gz -C /usr/src && \
     cd /usr/src/zlib-1.3.1; ./configure; make -j"$(($(nproc)+1))"; make -j"$(($(nproc)+1))" install
 
-RUN export CONFIG_SITE=/bitcoin/depends/$(/bitcoin/depends/config.guess)/share/config.site && \
-    cd /bitcoin; ./autogen.sh; \
+RUN export CONFIG_SITE=/groestlcoin/depends/$(/groestlcoin/depends/config.guess)/share/config.site && \
+    cd /groestlcoin; ./autogen.sh; \
     ./configure --disable-ccache \
     --disable-maintainer-mode \
     --disable-dependency-tracking \
@@ -47,10 +47,10 @@ RUN make -j"$(($(nproc)+1))" && \
 
 FROM alpine:latest
 COPY --from=build /usr/local /usr/local
-COPY --from=build /bitcoin/share/examples/bitcoin.conf /.bitcoin/bitcoin.conf
+COPY --from=build /groestlcoin/share/examples/groestlcoin.conf /.groestlcoin/groestlcoin.conf
 
-VOLUME ["/.bitcoin"]
+VOLUME ["/.groestlcoin"]
 
-EXPOSE 8332 8333 18332 18333 18444
+EXPOSE 1331 1441 17777 17766 18888 18443 31331 31441
 
-ENTRYPOINT ["/usr/local/bin/bitcoind", "-printtoconsole"]
+ENTRYPOINT ["/usr/local/bin/groestlcoind", "-printtoconsole"]

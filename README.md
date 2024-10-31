@@ -1,2 +1,2 @@
-# docker-bitcoind
-Bitcoin done lightweight and auditable
+# docker-groestlcoind
+Groestlcoin done lightweight and auditable
